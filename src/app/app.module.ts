@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainPageComponent } from './main-page/main-page.component';
 import { ChessBoardComponent } from './chess-board/chess-board.component';
-// import { NgxChessBoardModule } from "ngx-chess-board";
+import { NgxChessBoardModule } from "ngx-chess-board";
 
 @NgModule({
   declarations: [
@@ -16,7 +16,7 @@ import { ChessBoardComponent } from './chess-board/chess-board.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    // NgxChessBoardModule.forRoot()
+    NgxChessBoardModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

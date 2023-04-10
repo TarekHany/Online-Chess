@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {NgxChessBoardService} from 'ngx-chess-board';
 
 @Component({
   selector: 'app-chess-board',
@@ -6,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./chess-board.component.css']
 })
 export class ChessBoardComponent {
+  constructor(private ngxChessBoardService: NgxChessBoardService) { }
 
 }
