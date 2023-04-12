@@ -1,3 +1,4 @@
+import { GameState } from './../GameState';
 import { HOST } from './../constants';
 import { AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import { NgxChessBoardService } from 'ngx-chess-board';
@@ -13,18 +14,16 @@ import { ActivatedRoute } from '@angular/router';
 export class ChessBoardComponent implements OnInit, AfterViewInit {
   
   isPlayer1 : boolean = false; // player 1 is always white
-  isDisabled : boolean = true;
-  currentState: string = "";
+
   @ViewChild('board', {static: false}) board: NgxChessBoardView | undefined;
 
   constructor(private ngxChessBoardService: NgxChessBoardService, private route: ActivatedRoute) { 
     window.addEventListener(
       "message",
       (message) => {
-
-        console.log("message received from " + (message.data.fromPlayer1 ? "player1" : "player2") + " inside " + (this.isPlayer1 ? "player1" : "player2"));
-        if (message.data.fromPlayer1 == !this.isPlayer1) {
-          this.board?.setFEN(message.data.event.fen);
+        if (message.data.order == 'setState') {
+          let newState : GameState = message.data.newState;
+          this.board?.setFEN(newState.fen);
           if(!this.isPlayer1)
             this.board?.reverse();
         }
@@ -35,13 +34,12 @@ export class ChessBoardComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (this.isPlayer1 == false) {
-      setTimeout(() => {this.board?.reverse()}, 0);
+      setTimeout(() => { this.board?.reverse() }, 0);
     }
   }
   ngOnInit() {
     this.route.queryParams.subscribe( params => {
         this.isPlayer1 = params.player == 1
-        this.isDisabled = !this.isPlayer1;
         console.log("isPlayer1 "+ this.isPlayer1)
       } 
     );
@@ -57,6 +55,11 @@ export class ChessBoardComponent implements OnInit, AfterViewInit {
       fromPlayer1 : this.isPlayer1
     }, location.origin);
 
-    this.isDisabled = !this.isDisabled;
+    if (event.checkmate) {
+      window.alert((this.isPlayer1? "Player 1" : "Player 2") + " wins!");
+    }
+    if (event.stalemate) {
+      window.alert("Draw!");
+    }
   }
 }

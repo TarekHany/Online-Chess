@@ -1,3 +1,2 @@
-<ngx-chess-board [showCoords]="true" [size]="500" (moveChange)="moveChange($event)" #board></ngx-chess-board>
+<ngx-chess-board [showLastMove]="false" [lightDisabled]="!isPlayer1" [darkDisabled]="isPlayer1" [showCoords]="true" [size]="500" (moveChange)="moveChange($event)" #board></ngx-chess-board>
 
-<!-- [lightDisabled]="!isDisabled" [darkDisabled]="isDisabled"  -->
