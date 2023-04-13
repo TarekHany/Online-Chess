@@ -1,0 +1,6 @@
+<div>
+    <h1>Online Room ID: {{roomID}}</h1>
+    <h2>You are player {{playernum}}!</h2>
+    <h2>{{isYourTurn ? 'Your turn!':'Waiting for the other player'}}</h2>
+    <iframe [src]="'iframe?player=' + playernum | safe" frameborder="0" frameborder="50" height="530" width="520" ></iframe>
+</div>

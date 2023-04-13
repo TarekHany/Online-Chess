@@ -1,6 +1,6 @@
 import { GameState } from './../GameState';
-import { HOST, INITIAL_FEN_STATE } from './../constants';
-import { Component, HostListener, OnDestroy, OnInit, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { INITIAL_FEN_STATE } from './../constants';
+import { Component, HostListener, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-main-page',
@@ -19,12 +19,12 @@ export class MainPageComponent implements OnInit {
     if(message.data.type === 'webpackOk')
       return;
     
-    this.gameState = new GameState(message.data.event.fen, !this.gameState.player1Turn);
+    this.gameState = new GameState(message.data.event.fen, !this.gameState.player1Turn, message.data.event.checkmate, message.data.event.stalemate);
     this.setState(this.gameState);
   }
 
   newGame() {
-    this.gameState = new GameState(INITIAL_FEN_STATE, true);
+    this.gameState = new GameState(INITIAL_FEN_STATE, true, false, false);
     this.setState(this.gameState);
   }
   
@@ -42,12 +42,18 @@ export class MainPageComponent implements OnInit {
         iframe.style.pointerEvents = "none";
       }
     });
+    if (this.gameState.isCheckmate) {
+      let winner = gameState.player1Turn ? "player 2": "player 1";
+      window.alert("Winner is "+winner);
+    }else if (this.gameState.isStalemate) {
+      window.alert("Draw!");
+    }
   }
 
   ngOnInit(): void {
     let savedState = JSON.parse(localStorage.getItem("state")!);
     console.log(savedState);
-    this.gameState = savedState || new GameState(INITIAL_FEN_STATE, true);
+    this.gameState = savedState || new GameState(INITIAL_FEN_STATE, true, false, false);
     console.log("gameState: constructor");
     console.log(this.gameState);
     setTimeout(() => this.setState(this.gameState), 1000); //TODO: fix
@@ -59,6 +65,4 @@ export class MainPageComponent implements OnInit {
     console.log(JSON.stringify(this.gameState));
     localStorage.setItem('state', JSON.stringify(this.gameState));
   }
-  
-  
 }
