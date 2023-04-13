@@ -1,6 +1,6 @@
 import { GameState } from './../../GameState';
 import { OnlineGameplayService } from './../../online-gameplay.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -14,7 +14,7 @@ export class GamePageComponent implements OnInit {
   roomID:string = "";
   gameState!:GameState|null;
   isYourTurn:boolean=true;
-  constructor(private route : ActivatedRoute, private onlineGameplayService:OnlineGameplayService) { 
+  constructor(private route : ActivatedRoute, private router:Router,private onlineGameplayService:OnlineGameplayService) { 
     window.addEventListener("message", (message) => {this.receiveMessage(message)}, false);
   }
 
@@ -23,7 +23,12 @@ export class GamePageComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.roomID = params.room;
       this.playernum = params.player;
-      this.onlineGameplayService.getState(this.roomID).then((val) => this.setState(val!));
+      this.onlineGameplayService.getState(this.roomID)
+      .then((val) => this.setState(val!))
+      .catch((err) => {
+        window.alert("No room exists with the given ID!")
+        this.router.navigateByUrl("online");
+      });
       this.onlineGameplayService.listenOnChanges(this.roomID, this);
     })
   }
