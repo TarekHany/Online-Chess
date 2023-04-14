@@ -1,8 +1,6 @@
 import { GameState } from './../GameState';
 import { AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import { NgxChessBoardService } from 'ngx-chess-board';
 import { NgxChessBoardView} from 'ngx-chess-board';
-import {  } from '@angular/core'
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -16,10 +14,12 @@ export class ChessBoardComponent implements OnInit, AfterViewInit {
 
   @ViewChild('board', {static: false}) board: NgxChessBoardView | undefined;
 
-  constructor(private ngxChessBoardService: NgxChessBoardService, private route: ActivatedRoute) { 
+  constructor(private route: ActivatedRoute) { 
     window.addEventListener(
       "message",
       (message) => {
+        if(message.origin != window.location.origin)
+          return;
         if (message.data.order == 'setState') {
           let newState : GameState = message.data.newState;
           this.board?.setFEN(newState.fen);
@@ -38,9 +38,7 @@ export class ChessBoardComponent implements OnInit, AfterViewInit {
   }
   ngOnInit() {
     this.route.queryParams.subscribe( params => {
-        console.log(params);
         this.isPlayer1 = params.player == 1
-        console.log("isPlayer1 "+ this.isPlayer1)
       } 
     );
   }
@@ -49,17 +47,9 @@ export class ChessBoardComponent implements OnInit, AfterViewInit {
   }
 
   moveChange(event:any) {
-    console.log("fromPlayer1? " + this.isPlayer1);
     window.parent.postMessage({
       event: event, 
       fromPlayer1 : this.isPlayer1
     }, location.origin);
-
-    if (event.checkmate) {
-      window.alert((this.isPlayer1? "Player 1" : "Player 2") + " wins!");
-    }
-    if (event.stalemate) {
-      window.alert("Draw!");
-    }
   }
 }

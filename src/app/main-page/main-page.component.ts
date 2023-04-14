@@ -18,7 +18,9 @@ export class MainPageComponent implements OnInit {
       return;
     if(message.data.type === 'webpackOk')
       return;
-    
+    if (message.origin != window.location.origin)
+      return;
+
     this.gameState = new GameState(message.data.event.fen, !this.gameState.player1Turn, message.data.event.checkmate, message.data.event.stalemate);
     this.setState(this.gameState);
   }
@@ -44,7 +46,7 @@ export class MainPageComponent implements OnInit {
     });
     if (this.gameState.isCheckmate) {
       let winner = gameState.player1Turn ? "player 2": "player 1";
-      window.alert("Winner is "+winner);
+      window.alert("Winner is "+ winner);
     }else if (this.gameState.isStalemate) {
       window.alert("Draw!");
     }
@@ -52,17 +54,13 @@ export class MainPageComponent implements OnInit {
 
   ngOnInit(): void {
     let savedState = JSON.parse(localStorage.getItem("state")!);
-    console.log(savedState);
     this.gameState = savedState || new GameState(INITIAL_FEN_STATE, true, false, false);
-    console.log("gameState: constructor");
-    console.log(this.gameState);
     setTimeout(() => this.setState(this.gameState), 1000); //TODO: fix
   }
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(event:any) {
     // save state
-    console.log(JSON.stringify(this.gameState));
     localStorage.setItem('state', JSON.stringify(this.gameState));
   }
 }

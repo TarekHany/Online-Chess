@@ -37,7 +37,9 @@ export class GamePageComponent implements OnInit {
       return;
     if(message.data.type === 'webpackOk')
       return;
-
+    if (message.origin != window.location.origin)
+      return;
+      
     this.gameState = new GameState(message.data.event.fen, !message.data.fromPlayer1, message.data.event.checkmate, message.data.event.stalemate);
     this.onlineGameplayService.saveState(this.roomID, this.gameState);
   }

@@ -19,7 +19,8 @@ export class HomePageComponent implements OnInit {
 
   joinOnlineGame() {
     let roomID = window.prompt("Enter the room code: ");
-    this.router.navigateByUrl('online/game?player=2&room='+roomID);
+    if(roomID != null)
+      this.router.navigateByUrl('online/game?player=2&room='+roomID);
   }
   newOnlineGame() {
     this.onlineGameplayService.createRoom(new GameState(INITIAL_FEN_STATE, true, false, false))

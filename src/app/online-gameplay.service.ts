@@ -35,7 +35,6 @@ export class OnlineGameplayService {
     
     let val = get(ref(this.db, 'rooms/'+roomID))
     .then((snapshot) => {
-      console.log(snapshot.val())
       return snapshot.val();
     })
     .catch((err)=> {
@@ -47,17 +46,13 @@ export class OnlineGameplayService {
 
   saveState(roomID: string, newState: GameState) {
     set(ref(this.db, 'rooms/' + roomID), newState)
-    .then(() => {
-      console.log("saved successfully");
-      console.log(newState);
-    })
     .catch((err) => {
       console.log("Failed to save state: ", err); 
     });
   }
 
   listenOnChanges(roomID:string, gamePageComponent : GamePageComponent) {
-    onValue(ref(this.db, 'rooms/'+roomID), (snapshot) => {
+    onValue(ref(this.db, 'rooms/' + roomID), (snapshot) => {
       gamePageComponent.setState(snapshot.val()); 
     })
   }
